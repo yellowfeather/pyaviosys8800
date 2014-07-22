@@ -26,6 +26,8 @@
 # NO OBLIGATION TO PROVIDE MAINTENANCE, SUPPORT, UPDATES, ENHANCEMENTS, OR
 # MODIFICATIONS.
 
+# With thanks to Lance: http://raspberrypi.stackexchange.com/users/1237/lance
+# and this answer on StackExchange: http://raspberrypi.stackexchange.com/a/1685/19199
 
 
 import usb
