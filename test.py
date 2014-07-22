@@ -1,4 +1,4 @@
-# Copyright (C) 2014 Chris Richards
+# Copyright (C) 2014 Yellow Feather Ltd
 #
 # The following terms apply to all files associated
 # with the software unless explicitly disclaimed in individual files.
