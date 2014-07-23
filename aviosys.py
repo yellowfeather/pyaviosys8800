@@ -31,7 +31,6 @@
 
 
 import usb
-import usb.legacy
 
 
 class Aviosys8800(object):
@@ -40,25 +39,20 @@ class Aviosys8800(object):
     self.dev = None
 
   def open(self):
-    # Find my device - idVendor = 0x067b idProduct = 0x2303
-    newDev = usb.core.find(idVendor=0x067b, idProduct=0x2303)
-    if newDev is None:
+    self.dev = usb.core.find(idVendor=0x067b, idProduct=0x2303)
+    if self.dev is None:
       raise ValueError('USB switch not found')
 
-    newDev.set_configuration()
-    # newDev.detach_kernel_driver(0)
-    self.dev = usb.legacy.Device(newDev)
-    self.handle = self.dev.open()
-    # handle.detachKernelDriver(0)
-    self.handle.claimInterface(0)
+    self.dev.set_configuration()
+    usb.util.claim_interface(self.dev, 0)
 
   def close(self):
     self.USB1(0x21,34,2,0,0)
     self.USB1(0x21,34,0,0,0)
-    self.handle.releaseInterface()
+    usb.util.release_interface(self.dev, 0)
 
   def init(self):
-    self.USB2(0x40,1,1028.0)
+    self.USB2(0x40,1,1028,0)
     self.USB2(0x40,1,1028,1)
     self.USB2(0x40,1,1028,32)
     self.USB2(0x40,1,1028,33)
@@ -121,10 +115,10 @@ class Aviosys8800(object):
 
   def USB1 (self, utype=0xC0, ureq=1, uvalue=0, uindex=1028, ubytes=0):
     if ubytes != 7:
-      status=self.handle.controlMsg(int(utype), int(ureq), int(ubytes),  int(uvalue),int( uindex))
+      status=self.dev.ctrl_transfer(int(utype), int(ureq), wValue = uvalue, wIndex = uindex, data_or_wLength = ubytes, timeout = 100)
     else:
       ubuffer = 0xB0,0x4,0x0,0x0,0x2,0x7
-      status=self.handle.controlMsg(int(utype), int(ureq), ubuffer,  int(uvalue), int(uindex))
+      status=self.dev.ctrl_transfer(int(utype), int(ureq), wValue = uvalue, wIndex = uindex, data_or_wLength = ubuffer, timeout = 100)
     return status
 
   def USB2 (self, vtype, vreq=1, vvalue=1028, vindex=0, vbytes=0):
